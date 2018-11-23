@@ -1,11 +1,8 @@
-
 import tkinter as tk
 from tkinter import ttk
 import sqlite3, hashlib, pickle
 from tkinter import *
 from tkinter import messagebox
-
-
 
 class Main(tk.Frame):
     def __init__(self, root):
@@ -145,9 +142,7 @@ class Child2(tk.Toplevel):
         self.button_logout.pack()
         self.button_logout.place(x = 300, y = 650)
 
-        # установить якорь на юго-запад
-        # self.button_logout.anchor(anchor=SW)
-
+    # todo: сделать определение администратора через БД
     def is_admin(self, user):
         return user[0] == 500
 
@@ -188,15 +183,12 @@ class Entrance(tk.Frame):
         if (user == None):
             messagebox.showerror("Ошибка!", "Веден неверный логин или пароль")
         else:
-            # messagebox.showinfo("Hi")
             try:
                 nextwindow = Child2(self._root, user, self)
                 nextwindow.tkraise()
             except Exception as ex:
                 print(ex)
 
-        # self.root.withdraw()
-        # except IndexError  as e:
 
     def login(self):
         text_enter_log = Label(text = "Введите ваш логин")
