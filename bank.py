@@ -144,7 +144,7 @@ class Child2(tk.Toplevel):
 
     # todo: сделать определение администратора через БД
     def is_admin(self, user):
-        return user[0] == 500
+        return user == True
 
     def search(self):
         self.enter_search = ttk.Entry(self)
@@ -179,8 +179,16 @@ class Entrance(tk.Frame):
         c = conn.cursor()
         c.execute('SELECT * from users WHERE login = ? and password = ?', (l,str(p)))
         user = c.fetchone()
-        print(user)
         if (user == None):
+            c.execute('SELECT * from admins WHERE login = ? and password = ?', (l,str(p)))
+            admin = c.fetchone()
+
+            if admin:
+                user = True
+            else:
+                user = False
+
+        if user == None:
             messagebox.showerror("Ошибка!", "Веден неверный логин или пароль")
         else:
             try:
