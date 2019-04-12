@@ -52,8 +52,6 @@ class Child(tk.Toplevel):
         self.geometry("550x650+300+200")
         self.grab_set() #Перехватывает все события происходящие в приложении
         self.focus_set() #Захватывает и удерживает фокус
-
-
         #Подписать поля ввода
         label_two = ttk.Label(self, text = "Фамилия")
         label_two.place( x = 50, y = 50)
@@ -123,6 +121,55 @@ class Child(tk.Toplevel):
 
 
 
+class Check_in(tk.Toplevel):
+    def __init__(self):
+        super().__init__(root)
+        self.init_admin()
+
+    def insert_admin(self,surname, name, middle_name, login, password):
+        password = hashlib.sha1(str(password).encode())
+        password.update(b"$0l")
+        password = password.hexdigest()
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute(''' INSERT INTO admins(surname, name, middle_name, login, password) VALUES(?,?,?,?,?)''', (surname, name, middle_name, login, password))
+        conn.commit()
+
+    def init_admin(self):
+        self.title("Регистрация администратора")
+        self.geometry("550x650+300+200")
+        self.grab_set()
+        self.focus_set()
+
+        label_surname = ttk.Label(self, text = "Фамилия")
+        label_surname.place( x = 50, y = 50)
+        label_name = ttk.Label(self, text = "Имя")
+        label_name.place( x = 50, y = 80)
+        label_middle_name = ttk.Label(self, text = "Отчество")
+        label_middle_name.place( x = 50, y = 110)
+        label_login = ttk.Label(self, text = "Логин")
+        label_login.place( x = 50, y = 140)
+        label_password = ttk.Label(self, text = "Пароль")
+        label_password.place( x = 50, y = 170)
+
+        self.entry_surname = ttk.Entry(self)
+        self.entry_surname.place(x = 200, y = 50)
+        self.entry_name = ttk.Entry(self)
+        self.entry_name.place(x = 200, y = 80)
+        self.entry_middle_name = ttk.Entry(self)
+        self.entry_middle_name.place(x = 200, y = 110)
+        self.entry_login = ttk.Entry(self)
+        self.entry_login.place(x = 200, y = 140)
+        self.entry_password = ttk.Entry(self)
+        self.entry_password.place(x = 200, y = 170)
+
+        button_ok = ttk.Button(self, text = 'Добавить')
+        button_ok.place(x = 190, y = 200)
+        button_ok.bind('<Button-1>', lambda event: self.insert_admin(self.entry_surname.get(), self.entry_name.get(),self.entry_middle_name.get(),self.entry_login.get(), self.entry_password.get()))
+
+        button_cancel = ttk.Button(self, text = "Закрыть", command = self.destroy)
+        button_cancel.place(x = 290, y =200)
+
 
 class Child2(tk.Toplevel):
     def __init__(self, root, currentuser, previouswindow):
@@ -174,6 +221,9 @@ class Child2(tk.Toplevel):
         self.tree.heading('tin', text = 'ИНН')
 
         self.tree.pack()
+
+        button_chek_in_admin = ttk.Button(self, text = "Регистрация администратора", command = Check_in)
+        button_chek_in_admin.place(x = 400, y = 650)
 
         if self.is_admin(self.currentuser):
             conn = sqlite3.connect("users.db")
