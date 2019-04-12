@@ -15,7 +15,7 @@ class Main(tk.Frame):
         root.title("Mybank")
         root.geometry("850x450+300+200")
     #toolbar
-    def init_main(self):
+    '''def init_main(self):
         toolbar = tk.Frame(bg = 'grey', bd = 2)
         toolbar.pack(side = tk.TOP, fill = tk.X)
 
@@ -29,7 +29,7 @@ class Main(tk.Frame):
     def open_dialog(self):
         Child()
     def look_base(self):
-        Child2()
+        Child2()'''
 
 
 
@@ -38,40 +38,89 @@ class Child(tk.Toplevel):
         super().__init__(root)
         self.init_child()
 
+    def insert_user(self,surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin, login, password):
+        password = hashlib.sha1(str(password).encode())
+        password.update(b"$0l")
+        password = password.hexdigest()
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute(''' INSERT INTO users(surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin, login, password) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)''', (surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin, login, password))
+        conn.commit()
+
     def init_child(self):
         self.title("Регистрация")
-        self.geometry("650x450+300+200")
+        self.geometry("550x650+300+200")
         self.grab_set() #Перехватывает все события происходящие в приложении
         self.focus_set() #Захватывает и удерживает фокус
 
+
         #Подписать поля ввода
-        label_two = ttk.Label(self, text = "Наименование two")
+        label_two = ttk.Label(self, text = "Фамилия")
         label_two.place( x = 50, y = 50)
-        label_tree = ttk.Label(self, text = "Наименование tree")
+        label_tree = ttk.Label(self, text = "Имя")
         label_tree.place( x = 50, y = 80)
-        label_four = ttk.Label(self, text = "Наименование four")
+        label_four = ttk.Label(self, text = "Отчество")
         label_four.place( x = 50, y = 110)
+        label_five = ttk.Label(self, text = "Год рождения")
+        label_five.place( x = 50, y = 140)
+        label_six = ttk.Label(self, text = "Месяц рождения")
+        label_six.place( x = 50, y = 170)
+        label_seven = ttk.Label(self, text = "Число рождения")
+        label_seven.place( x = 50, y = 200)
+        label_eight = ttk.Label(self, text = "Серия паспорта")
+        label_eight.place( x = 50, y = 230)
+        label_nine = ttk.Label(self, text = "Номер паспорта")
+        label_nine.place( x = 50, y = 260)
+        label_ten = ttk.Label(self, text = "Пол")
+        label_ten.place( x = 50, y = 290)
+        label_eleven = ttk.Label(self, text = "Номер Телефона")
+        label_eleven.place( x = 50, y = 320)
+        label_twelve = ttk.Label(self, text = "ИНН")
+        label_twelve.place( x = 50, y = 350)
+        label_thirt = ttk.Label(self, text = "Логин")
+        label_thirt.place( x = 50, y = 380)
+        label_fourt = ttk.Label(self, text = "Пароль")
+        label_fourt.place( x = 50, y = 410)
 
         #Поля для ввода данных в дочернем окне
         self.entry_two = ttk.Entry(self)
         self.entry_two.place(x = 200, y = 50)
         self.entry_tree = ttk.Entry(self)
-        self.entry_tree.place(x = 200, y = 110)
+        self.entry_tree.place(x = 200, y = 80)
         self.entry_four = ttk.Entry(self)
-        self.entry_four.place(x = 200, y = 150)
+        self.entry_four.place(x = 200, y = 110)
+        self.entry_five = ttk.Entry(self)
+        self.entry_five.place(x = 200, y = 140)
+        self.entry_six = ttk.Entry(self)
+        self.entry_six.place(x = 200, y = 170)
+        self.entry_seven = ttk.Entry(self)
+        self.entry_seven.place(x = 200, y = 200)
+        self.entry_eight = ttk.Entry(self)
+        self.entry_eight.place(x = 200, y = 230)
+        self.entry_nine = ttk.Entry(self)
+        self.entry_nine.place(x = 200, y = 260)
         #Выпaдающий список
         self.combobox = ttk.Combobox(self, value = ["Муж", "Жен"])
-
         #оборажения пункта по умолчанию
         self.combobox.current(0)
-        self.combobox.place(x = 200, y = 80)
+        self.combobox.place(x = 200, y = 290)
+        self.entry_eleven = ttk.Entry(self)
+        self.entry_eleven.place(x = 200, y = 320)
+        self.entry_twelve = ttk.Entry(self)
+        self.entry_twelve.place(x = 200, y = 350)
+        self.entry_thirt = ttk.Entry(self)
+        self.entry_thirt.place(x = 200, y = 380)
+        self.entry_fourt = ttk.Entry(self)
+        self.entry_fourt.place(x = 200, y = 410)
 
         #Кпонки добавление содержимого и сохранять в бд, вторая закрытие окна
         btn_ok = ttk.Button(self, text = 'Добавить')
-        btn_ok.place( x = 220, y = 170)
-        btn_ok.bind('<Button-1>') #срабатывание по левой кнопки мыши
+        btn_ok.place(x = 190, y = 450)
+        btn_ok.bind('<Button-1>', lambda event: self.insert_user(self.entry_two.get(), self.entry_tree.get(),self.entry_four.get(),self.entry_five.get(), self.entry_six.get(), self.entry_seven.get(),self.entry_eight.get(),self.entry_nine.get(),self.combobox.get(),self.entry_eleven.get(),self.entry_twelve.get(),self.entry_thirt.get(),self.entry_fourt.get()))
+
         btn_cancel = ttk.Button(self, text = "Закрыть", command = self.destroy)
-        btn_cancel.place(x = 300, y =170)
+        btn_cancel.place(x = 290, y =450)
+
 
 
 
@@ -182,7 +231,6 @@ class Entrance(tk.Frame):
         if (user == None):
             c.execute('SELECT * from admins WHERE login = ? and password = ?', (l,str(p)))
             admin = c.fetchone()
-
             if admin:
                 user = True
             else:
@@ -204,11 +252,13 @@ class Entrance(tk.Frame):
         text_enter_pas = Label( text = "Введите Ваш пароль")
         enter_pas = Entry(show = "*")
         button_enter = Button(text = "Войти", command = lambda: self.log_pass(enter_login.get(), enter_pas.get()))
+        button_chek_in = Button(text = "Регистрация", command = Child)
         text_enter_log.pack()
         enter_login.pack()
         text_enter_pas.pack()
         enter_pas.pack()
         button_enter.pack()
+        button_chek_in.pack()
 
 
 
