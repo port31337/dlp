@@ -1,3 +1,4 @@
+#create table admins (id integer not null primary key AUTOINCREMENT,surname text,name text,middle_name text,login varchar(20),password text);
 import sqlite3
 import hashlib
 import  random
@@ -10,11 +11,15 @@ def hash(h):
     h = h.hexdigest()
     return(h)
 
-#89654046735
-#123
-user = ['Федорчук', 'Елена', 'Дмитриевна', '1996', '03', '24', '5555', '188888', 'жен', '89654046735', '000-000-000 00|', '89654046735']
-user.append(hash(123))
-c.execute('INSERT into users(surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin, login, password) values(?,?,?,?,?,?,?,?,?,?,?,?,?)', user)
+
+admin1 = ['Федорчук', 'Елена','Дмитриевна','fedorchuk', hash(123)]
+admin2 = ['Алоскин', 'Максим', 'Максимович','aloskin', hash(456)]
+admin3 = ['Паков', 'Александр', 'Александрович', 'pakov', hash(789)]
+
+
+c.execute('INSERT into admins(surname, name, middle_name, login, password) values(?,?,?,?,?)', admin1)
+c.execute('INSERT into admins(surname, name, middle_name, login, password) values(?,?,?,?,?)', admin2)
+c.execute('INSERT into admins(surname, name, middle_name, login, password) values(?,?,?,?,?)', admin3)
 conn.commit()
 c.close()
 conn.close()
