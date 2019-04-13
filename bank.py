@@ -14,23 +14,6 @@ class Main(tk.Frame):
         app.pack()
         root.title("Mybank")
         root.geometry("850x450+300+200")
-    #toolbar
-    '''def init_main(self):
-        toolbar = tk.Frame(bg = 'grey', bd = 2)
-        toolbar.pack(side = tk.TOP, fill = tk.X)
-
-        btn_open_dia = tk.Button(toolbar, text = "Регистрация", command = self.open_dialog, bg ="grey", bd = 0, compound = tk.TOP)
-        btn_open_dia.pack(side = tk.RIGHT)
-        btn_open_dia2 = tk.Button(toolbar, text = "Просмотр", command = self.look_base, bg ="grey", bd = 0, compound = tk.TOP)
-        btn_open_dia2.pack(side = tk.RIGHT)
-        btn_open_dia3 = tk.Button(toolbar, text = "Администратор", command = self.open_dialog, bg ="grey", bd = 0, compound = tk.TOP)
-        btn_open_dia3.pack(side = tk.LEFT)
-
-    def open_dialog(self):
-        Child()
-    def look_base(self):
-        Child2()'''
-
 
 
 class Child(tk.Toplevel):
@@ -183,6 +166,14 @@ class Child2(tk.Toplevel):
         if self.is_admin(currentuser):
             self.search()
 
+    def view_records(self):
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute('''SELECT * from users''')
+        [self.tree.delete(i) for i in self.tree.get_children()]
+        for row in c:
+            self.tree.insert('', 'end', values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]))
+
     def table(self):
         self.title("Просмотр базы клиентов")
         self.geometry("1000x700+0+500")
@@ -222,8 +213,9 @@ class Child2(tk.Toplevel):
 
         self.tree.pack()
 
-        button_chek_in_admin = ttk.Button(self, text = "Регистрация администратора", command = Check_in)
-        button_chek_in_admin.place(x = 400, y = 650)
+
+
+
 
         if self.is_admin(self.currentuser):
             conn = sqlite3.connect("users.db")
@@ -232,6 +224,10 @@ class Child2(tk.Toplevel):
             for row in c:
                 self.tree.insert('', 'end', values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]))
             conn.commit()
+            button_chek_in_admin = ttk.Button(self, text = "Просмотр базы", command =lambda: self.view_records())
+            button_chek_in_admin.place(x = 300, y = 650)
+            button_chek_in_admin = ttk.Button(self, text = "Регистрация администратора", command = Check_in)
+            button_chek_in_admin.place(x = 420, y = 650)
         else:
             u = self.currentuser
             self.tree.insert('', 'end', values=(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11]))
@@ -239,7 +235,7 @@ class Child2(tk.Toplevel):
     def logout(self):
         self.button_logout = ttk.Button(self, text = "Выйти", command = lambda: sys.exit(0))
         self.button_logout.pack()
-        self.button_logout.place(x = 300, y = 650)
+        self.button_logout.place(x = 640, y = 650)
 
     # todo: сделать определение администратора через БД
     def is_admin(self, user):
@@ -278,17 +274,13 @@ class Entrance(tk.Frame):
         c = conn.cursor()
         c.execute('SELECT * from users WHERE login = ? and password = ?', (l,str(p)))
         user = c.fetchone()
-        if (user == None):
-            c.execute('SELECT * from admins WHERE login = ? and password = ?', (l,str(p)))
-            admin = c.fetchone()
-            if admin:
-                user = True
-            else:
-                user = False
-
-        if user == None:
+        c.execute('SELECT * from admins WHERE login = ? and password = ?', (l,str(p)))
+        admin = c.fetchone()
+        if user == None and admin == None:
             messagebox.showerror("Ошибка!", "Веден неверный логин или пароль")
         else:
+            if admin:
+                user = True
             try:
                 nextwindow = Child2(self._root, user, self)
                 nextwindow.tkraise()
