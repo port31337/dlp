@@ -13,7 +13,7 @@ class Main(tk.Frame):
         app = Main(root)
         app.pack()
         root.title("Mybank")
-        root.geometry("850x450+300+200")
+        root.geometry("900x500+300+200")
 
 
 class Child(tk.Toplevel):
@@ -174,6 +174,8 @@ class Child2(tk.Toplevel):
         for row in c:
             self.tree.insert('', 'end', values=(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]))
 
+
+
     def table(self):
         self.title("Просмотр базы клиентов")
         self.geometry("1000x700+0+500")
@@ -214,9 +216,6 @@ class Child2(tk.Toplevel):
         self.tree.pack()
 
 
-
-
-
         if self.is_admin(self.currentuser):
             conn = sqlite3.connect("users.db")
             c = conn.cursor()
@@ -231,6 +230,22 @@ class Child2(tk.Toplevel):
         else:
             u = self.currentuser
             self.tree.insert('', 'end', values=(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11]))
+            button_edit = tk.Button(self, text='Редактировать данные', command = self.open_update_dialog())
+            button_edit.place(x = 200, y = 650)
+
+
+    def open_update_dialog(self):
+        Update()
+
+    def update_record(self, surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin,login, password):
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute('''UPDATE users SET surname=?, name=?, middle_name=?, year_of_birth=?, month_of_birth=?, day_of_birth=?, passport_series=?, passport_number=?, sex=?, phone_number=?, tin=? WHERE ID=?''',
+                          (surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin, login, password, self.tree.set(self.tree.selection()[0], '#1')))
+        conn.commit()
+        self.view_records()
+
+
 
     def logout(self):
         self.button_logout = ttk.Button(self, text = "Выйти", command = lambda: sys.exit(0))
@@ -302,6 +317,21 @@ class Entrance(tk.Frame):
         button_enter.pack()
         button_chek_in.pack()
 
+
+class Update(Child):
+    def __init__(self, root, currentuser, previouswindow):
+        super().__init__()
+        self.init_edit()
+        self.view = Child2()
+
+
+    def init_edit(self):
+        self.title('Изменение данных')
+        btn_edit = ttk.Button(self, text = 'Редактировать')
+        btn_edit.place(x = 190, y = 450)
+        btn_edit.bind('<Button-1>', lambda event: self.update_record(self.entry_two.get(), self.entry_tree.get(), self.entry_four.get(), self.entry_five.get(), self.entry_six.get(),self.entry_seven.get(),self.entry_eight.get(),self.entry_nine.get(),self.combobox.get(), self.entry_eleven.get(), self.entry_twelve.get(),self.entry_thirt.get(),self.entry_fourt.get()))
+
+        #self.btn_ok.destroy()
 
 
 root = tk.Tk()
