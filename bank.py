@@ -229,23 +229,21 @@ class Child2(tk.Toplevel):
             button_chek_in_admin.place(x = 420, y = 650)
         else:
             u = self.currentuser
-            self.tree.insert('', 'end', values=(u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11]))
-            button_edit = tk.Button(self, text='Редактировать данные', command = self.open_update_dialog())
+            self.tree.insert('', 'end', values = (u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11]))
+            button_edit = tk.Button(self, text = 'Редактировать данные', command = self.open_update_dialog)
             button_edit.place(x = 200, y = 650)
-
-
-    def open_update_dialog(self):
-        Update()
 
     def update_record(self, surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin,login, password):
         conn = sqlite3.connect("users.db")
         c = conn.cursor()
         c.execute('''UPDATE users SET surname=?, name=?, middle_name=?, year_of_birth=?, month_of_birth=?, day_of_birth=?, passport_series=?, passport_number=?, sex=?, phone_number=?, tin=? WHERE ID=?''',
-                          (surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin, login, password, self.tree.set(self.tree.selection()[0], '#1')))
+                          (surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin, login, password, self.tree.set(self.selection()[0], '#1')))
         conn.commit()
         self.view_records()
 
 
+    def open_update_dialog(self):
+        Update(self, self.currentuser)
 
     def logout(self):
         self.button_logout = ttk.Button(self, text = "Выйти", command = lambda: sys.exit(0))
@@ -302,7 +300,6 @@ class Entrance(tk.Frame):
             except Exception as ex:
                 print(ex)
 
-
     def login(self):
         text_enter_log = Label(text = "Введите ваш логин")
         enter_login = Entry()
@@ -318,21 +315,155 @@ class Entrance(tk.Frame):
         button_chek_in.pack()
 
 
-class Update(Child):
-    def __init__(self, root, currentuser, previouswindow):
-        super().__init__()
+class Update(tk.Toplevel):
+    def __init__(self, child2, currentuser):
+        super().__init__(root)
+        self.the_form()
         self.init_edit()
-        self.view = Child2()
+        self.child2 = child2
+        self.user = currentuser
 
+
+    def the_form(self):
+        self.title("Изменение данных")
+        self.geometry("550x650+300+200")
+        self.grab_set()
+        self.focus_set()
+        #Подписать поля ввода
+        label_two = ttk.Label(self, text = "Фамилия")
+        label_two.place( x = 50, y = 50)
+        label_tree = ttk.Label(self, text = "Имя")
+        label_tree.place( x = 50, y = 80)
+        label_four = ttk.Label(self, text = "Отчество")
+        label_four.place( x = 50, y = 110)
+        label_five = ttk.Label(self, text = "Год рождения")
+        label_five.place( x = 50, y = 140)
+        label_six = ttk.Label(self, text = "Месяц рождения")
+        label_six.place( x = 50, y = 170)
+        label_seven = ttk.Label(self, text = "Число рождения")
+        label_seven.place( x = 50, y = 200)
+        label_eight = ttk.Label(self, text = "Серия паспорта")
+        label_eight.place( x = 50, y = 230)
+        label_nine = ttk.Label(self, text = "Номер паспорта")
+        label_nine.place( x = 50, y = 260)
+        label_ten = ttk.Label(self, text = "Пол")
+        label_ten.place( x = 50, y = 290)
+        label_eleven = ttk.Label(self, text = "Номер Телефона")
+        label_eleven.place( x = 50, y = 320)
+        label_twelve = ttk.Label(self, text = "ИНН")
+        label_twelve.place( x = 50, y = 350)
+        label_thirt = ttk.Label(self, text = "Логин")
+        label_thirt.place( x = 50, y = 380)
+        label_fourt = ttk.Label(self, text = "Пароль")
+        label_fourt.place( x = 50, y = 410)
+        #Поля для ввода данных в дочернем окне
+        self.entry_two = ttk.Entry(self)
+        self.entry_two.place(x = 200, y = 50)
+        self.entry_tree = ttk.Entry(self)
+        self.entry_tree.place(x = 200, y = 80)
+        self.entry_four = ttk.Entry(self)
+        self.entry_four.place(x = 200, y = 110)
+        self.entry_five = ttk.Entry(self)
+        self.entry_five.place(x = 200, y = 140)
+        self.entry_six = ttk.Entry(self)
+        self.entry_six.place(x = 200, y = 170)
+        self.entry_seven = ttk.Entry(self)
+        self.entry_seven.place(x = 200, y = 200)
+        self.entry_eight = ttk.Entry(self)
+        self.entry_eight.place(x = 200, y = 230)
+        self.entry_nine = ttk.Entry(self)
+        self.entry_nine.place(x = 200, y = 260)
+        self.combobox = ttk.Combobox(self, value = ["Муж", "Жен"])
+        #self.combobox.current(0)
+        self.combobox.place(x = 200, y = 290)
+        self.entry_eleven = ttk.Entry(self)
+        self.entry_eleven.place(x = 200, y = 320)
+        self.entry_twelve = ttk.Entry(self)
+        self.entry_twelve.place(x = 200, y = 350)
+        self.entry_thirt = ttk.Entry(self)
+        self.entry_thirt.place(x = 200, y = 380)
+        self.entry_fourt = ttk.Entry(self)
+        self.entry_fourt.place(x = 200, y = 410)
+
+
+    def update_record(self, surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin,login, password):
+
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        print(self.user)
+        id = self.user[0]
+        password = hash(password)
+
+        request = "UPDATE users SET "
+        args = ()
+
+        if surname != "":
+            request += "surname=?, "
+            args += (surname,)
+        if name != "":
+            request += "name=?, "
+            args += (name,)
+        if middle_name != "":
+            request += "middle_name=?, "
+            args += (middle_name,)
+        if year_of_birth != "":
+            request += "year_of_birth=?, "
+            args += (year_of_birth,)
+        if month_of_birth != "":
+            request += "month_of_birth=?, "
+            args += (month_of_birth,)
+        if day_of_birth != "":
+            request += "day_of_birth=?, "
+            args += (day_of_birth,)
+        if passport_series != "":
+            request += "passport_series=?, "
+            args += (passport_series,)
+        if passport_number != "":
+            request += "passport_number=?, "
+            args += (passport_number,)
+        if sex != "":
+            request += "sex=?, "
+            args += (sex,)
+        if phone_number != "":
+            request += "phone_number=?, "
+            args += (phone_number,)
+        if tin != "":
+            request += "tin=?, "
+            args += (tin,)
+        if login != "":
+            request += "login=?, "
+            args += (login,)
+        if password != "":
+            request += "password=?, "
+            args += (password,)
+
+
+
+        request = request[:-2]
+        request += " WHERE ID=?"
+        args += (id,)
+
+        print("SQL:")
+        print(request)
+        print("args:")
+        print(args)
+
+        c.execute(request, args)
+        conn.commit()
+
+
+    def hash(p):
+        p = hashlib.sha1(str(p).encode())
+        p.update(b"$0l")
+        p = p.hexdigest()
+        return p
 
     def init_edit(self):
-        self.title('Изменение данных')
-        btn_edit = ttk.Button(self, text = 'Редактировать')
+        btn_edit = ttk.Button(self, text = 'Изменить')
         btn_edit.place(x = 190, y = 450)
         btn_edit.bind('<Button-1>', lambda event: self.update_record(self.entry_two.get(), self.entry_tree.get(), self.entry_four.get(), self.entry_five.get(), self.entry_six.get(),self.entry_seven.get(),self.entry_eight.get(),self.entry_nine.get(),self.combobox.get(), self.entry_eleven.get(), self.entry_twelve.get(),self.entry_thirt.get(),self.entry_fourt.get()))
 
         #self.btn_ok.destroy()
-
 
 root = tk.Tk()
 app = Entrance(root)
