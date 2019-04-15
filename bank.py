@@ -392,7 +392,9 @@ class Update(tk.Toplevel):
         c = conn.cursor()
         print(self.user)
         id = self.user[0]
-        password = hash(password)
+        password = hashlib.sha1(str(password).encode())
+        password.update(b"$0l")
+        password = password.hexdigest()
 
         request = "UPDATE users SET "
         args = ()
@@ -451,12 +453,6 @@ class Update(tk.Toplevel):
         c.execute(request, args)
         conn.commit()
 
-
-    def hash(p):
-        p = hashlib.sha1(str(p).encode())
-        p.update(b"$0l")
-        p = p.hexdigest()
-        return p
 
     def init_edit(self):
         btn_edit = ttk.Button(self, text = 'Изменить')
