@@ -231,7 +231,8 @@ class Child2(tk.Toplevel):
             u = self.currentuser
             self.tree.insert('', 'end', values = (u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11]))
             button_edit = tk.Button(self, text = 'Редактировать данные', command = self.open_update_dialog)
-            button_edit.place(x = 200, y = 650)
+            button_edit.place(x = 160, y = 650)
+
 
     def update_record(self, surname, name, middle_name, year_of_birth, month_of_birth, day_of_birth, passport_series, passport_number, sex, phone_number, tin,login, password):
         conn = sqlite3.connect("users.db")
@@ -323,13 +324,16 @@ class Update(tk.Toplevel):
         self.child2 = child2
         self.user = currentuser
 
-
     def the_form(self):
         self.title("Изменение данных")
         self.geometry("550x650+300+200")
         self.grab_set()
         self.focus_set()
-        #Подписать поля ввода
+
+        btn_del = ttk.Button(self, text = 'Удалить пользователя')
+        btn_del.place(x = 300, y = 550)
+        btn_del.bind('<Button-1>', lambda event: self.delete())
+
         label_two = ttk.Label(self, text = "Фамилия")
         label_two.place( x = 50, y = 50)
         label_tree = ttk.Label(self, text = "Имя")
@@ -390,8 +394,10 @@ class Update(tk.Toplevel):
 
         conn = sqlite3.connect("users.db")
         c = conn.cursor()
+
         print(self.user)
         id = self.user[0]
+
         password = hashlib.sha1(str(password).encode())
         password.update(b"$0l")
         password = password.hexdigest()
@@ -454,9 +460,18 @@ class Update(tk.Toplevel):
         conn.commit()
 
 
+    def delete(self):
+        id = int(self.user[0])
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute('''DELETE from users WHERE id = ?''', (id,))
+        conn.commit()
+        print("Пользователь удален")
+        sys.exit(0)
+
     def init_edit(self):
         btn_edit = ttk.Button(self, text = 'Изменить')
-        btn_edit.place(x = 190, y = 450)
+        btn_edit.place(x = 200, y = 550)
         btn_edit.bind('<Button-1>', lambda event: self.update_record(self.entry_two.get(), self.entry_tree.get(), self.entry_four.get(), self.entry_five.get(), self.entry_six.get(),self.entry_seven.get(),self.entry_eight.get(),self.entry_nine.get(),self.combobox.get(), self.entry_eleven.get(), self.entry_twelve.get(),self.entry_thirt.get(),self.entry_fourt.get()))
 
         #self.btn_ok.destroy()
